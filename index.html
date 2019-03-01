@@ -3,20 +3,48 @@
 <head>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
-<script src="js/script.js"></<script>
-
-</script>
+  <script src="js/script.js">
+    < /<script>
+  </script>
   <title>Example</title>
+
+  <style>
+    .slidecontainer {
+      width: 100%;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 15px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+      position:relative;
+       top:0;
+       right:0;
+    }
+  </style>
 </head>
 
 <body>
 
-  <input class="slider" type='range' id='plant'>
-
-  <input class="slider" type='range' id='animal'>
+  <center>Simulation</center>
 
 
-<canvas id="myChart"></canvas>
+
+
+  <input class="slider" type='range' id='plant' style = 'position'name='plant' min="0" max="100" value="0">
+  <label for="plant">Plant</label><br><br>
+
+  <input class="slider" type='range' id='animal' name='animal' min="0" max="100" value="0">
+  <label for="plant">Animal</label><br><br>
+
+
+
+  <canvas id="myChart"></canvas>
 </body>
 
 </html>
