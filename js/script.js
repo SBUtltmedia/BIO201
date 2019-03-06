@@ -1,6 +1,7 @@
 $(function() {
   var day = 3
-  var o2data = 75
+  var o2data = 75;
+  var chart;
   console.log($('.slider'))
   var sliders = ['animal', 'plant']
   $('.slider').on('change', function(evt) {
@@ -11,7 +12,7 @@ $(function() {
 
     //chart.data.datasets[0].data
     o2data = Math.min(100,Math.max(0, o2data + o2formula(...sliderVals)))
-console.log(...sliderVals)
+    //console.log(...sliderVals)
     day = day + 1
     label = 'Day '+day
 
@@ -29,22 +30,46 @@ console.log(...sliderVals)
 
   })
 
+
+
+  setInterval(function(evt){     var sliderVals = sliders.map((cur, index) => $(`#${cur}`).val())
+       //console.log(sliderVals)
+
+
+      //chart.data.datasets[0].data
+      o2data = Math.min(100,Math.max(0, o2data + o2formula(...sliderVals)))
+      //console.log(...sliderVals)
+      day = day + 1
+      label = 'Day '+day
+
+      chart.data.labels.push(label);
+      chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(o2data);
+      });
+      chart.update(); }, 2000);
+
   var labels = Array.apply(null, {
     length: 3
   }).map((cur, index) => {
     return `Day ${index+1}`
 
   })
-  var ctx = $("#myChart");
+    var ctx = document.getElementById('myChart').getContext('2d');
 
 
-  let chart = new Chart(ctx, {
+  var img = new Image();
+  img.src = 'img/O2.png';
+  img.onload = function() {
+    var fillPattern = ctx.createPattern(img, 'repeat');
+
+ chart = new Chart(ctx, {
     type: 'line',
     data: {
       datasets: [{
         label: 'Percent',
+        borderColor: 'rgb(0, 0, 0)',
         data: [75, 75, 75],
-        fill: false
+         backgroundColor: fillPattern,
       }],
       labels: labels
     },
@@ -62,6 +87,8 @@ console.log(...sliderVals)
 
 
 
+
+}
 
 })
 //

@@ -13,9 +13,14 @@
       width: 100%;
     }
 
+    /* canvas {
+   background-image: url(img/Co2.png);
+    } */
+
     .slider {
+      float: left;
       -webkit-appearance: none;
-      width: 100%;
+      width: 30%;
       height: 15px;
       background: #d3d3d3;
       outline: none;
@@ -31,20 +36,24 @@
 
 <body>
 
-  <center>Simulation</center>
+  <center><h1>Simulation</center>
+  <br>
+  <br>
 
 
+<div id='chart' style="margin-right: 100px;
+  margin-left: 100px;">
+  <canvas id="myChart" width='400' height='180'></canvas>
+</div><br>
 
 
-  <input class="slider" type='range' id='plant' style = 'position'name='plant' min="0" max="100" value="0">
-  <label for="plant">Plant</label><br><br>
+  <input class="slider" type='range' id='plant' style = 'float:left;left:100px;' name='plant' min="0" max="100" value="0">
+  <input class="slider" type='range' id='animal' style = 'float:right;right:100px;' name='animal' min="0" max="100" value="0"><br>
 
-  <input class="slider" type='range' id='animal' name='animal' min="0" max="100" value="0">
-  <label for="plant">Animal</label><br><br>
+  <label  for='animal' style = 'float:left;position: relative;
+  right: 100px;'>Plant</label>
+  <label  for='anmial' style = 'float:right;left:109px'>Animals</label>
 
-
-
-  <canvas id="myChart"></canvas>
 </body>
 
 </html>
