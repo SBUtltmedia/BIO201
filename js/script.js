@@ -1,14 +1,19 @@
 $(function() {
+
+
+function submit() {
+
+}
   var day = 3
   var o2data = 75;
   var chart;
   console.log($('.slider'))
-  var sliders = ['animal', 'plant']
+  var sliders = ['plant','animal']
   $('.slider').on('change', function(evt) {
 
     var sliderVals = sliders.map((cur, index) => $(`#${cur}`).val())
      //console.log(sliderVals)
-
+var current =evt.currentTarget.id
 
     //chart.data.datasets[0].data
     o2data = Math.min(100,Math.max(0, o2data + o2formula(...sliderVals)))
@@ -22,7 +27,7 @@ $(function() {
     });
     chart.update();
 
-
+drawGrid(current, parseInt(sliderVals[sliders.indexOf(current)]/10))
 
 
     //  addData(chart, "df", 3)
@@ -38,6 +43,23 @@ $(function() {
 
       //chart.data.datasets[0].data
       o2data = Math.min(100,Math.max(0, o2data + o2formula(...sliderVals)))
+
+if(o2data%100 == 0 ) {
+  $( "#question" ).dialog({
+
+      height: 400,
+      width: 350,
+      modal: true,
+      buttons: {
+        "submit": submit,
+        Cancel: function() {
+          dialog.dialog( "close" );
+        }
+      }
+    });
+
+
+}
       //console.log(...sliderVals)
       day = day + 1
       label = 'Day '+day
@@ -58,7 +80,7 @@ $(function() {
 
 
   var img = new Image();
-  img.src = 'img/O2.png';
+  img.src = 'img/out.jpg';
   img.onload = function() {
     var fillPattern = ctx.createPattern(img, 'repeat');
 
@@ -101,8 +123,27 @@ $(function() {
 //
 // }
 
+function drawGrid(type, amount) { console.log(type)
+var el= $(`#${type}Grid`);
+//ar gridItem =
 
-function o2formula(animal, plant) {
+el.html("")
+while(amount--){
+console.log("f")
+
+  $(`#${type}Grid`).append($(
+      "<div/>",{class:"type"}
+    ))}
+
+
+
+
+
+
+
+}
+
+function o2formula(plant, animal) {
   return 0.21 * plant - 0.35 * animal;
 }
 
