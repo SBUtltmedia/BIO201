@@ -2,39 +2,56 @@ $(function() {
 var answers = new Answers();
 
 var openED = false
-function submit() {
 
-}
+
+var handle = $( "#custom-handle" );
+    $( "#slider" ).slider({
+      min: 0,
+      max: 10000,
+      value: 2,
+      create: function() {
+        handle.text( $( this ).slider( "value" ) );
+      },
+      slide: function( event, ui ) {
+        handle.text( ui.value + 'L');
+      }
+    });
+
+
   var day = 3
   var o2data = 75;
   var chart;
+  var chart2;
   console.log($('.slider'))
   var sliders = ['plant','animal']
+
   $('.slider').on('change', function(evt) {
 
     var sliderVals = sliders.map((cur, index) => $(`#${cur}`).val())
      //console.log(sliderVals)
-var current =evt.currentTarget.id
+     var x = ['1min','2min','3min'];
+     var o2 = [1000,2000,3000];
+     var co2 = [5000,6000,7000]
+ chart2.data.datasets[0].data = co2;
+ chart2.data.labels = x;
 
-    //chart.data.datasets[0].data
-    o2data = Math.min(100,Math.max(0, o2data + o2formula(...sliderVals)))
-    //console.log(...sliderVals)
-    day = day + 1
-    label = 'Day '+day
-
-    chart.data.labels.push(label);
-    chart.data.datasets.forEach((dataset) => {
-      dataset.data.push(o2data);
-    });
-    chart.update();
-
-drawGrid(current, parseInt(sliderVals[sliders.indexOf(current)]/10))
+ chart2.update();
 
 
-    //  addData(chart, "df", 3)
+ chart.data.datasets[0].data = o2;
+ chart.data.labels = x;
+
+ chart.update();
 
 
-  })
+
+
+//drawGrid(current, parseInt(sliderVals[sliders.indexOf(current)/10]))
+})
+
+
+
+
 
 
 
@@ -44,10 +61,10 @@ drawGrid(current, parseInt(sliderVals[sliders.indexOf(current)]/10))
 
       //chart.data.datasets[0].data
       o2data = Math.min(100,Math.max(0, o2data + o2formula(...sliderVals)))
-
+      co2data = 7000 - o2data
 
       day = day + 1
-      label = 'Day '+day
+      label = day + " min"
       if(!openED){
       chart.data.labels.push(label);
       chart.data.datasets.forEach((dataset) => {
@@ -57,7 +74,15 @@ drawGrid(current, parseInt(sliderVals[sliders.indexOf(current)]/10))
       chart.update();}
 
 
-      if(o2data%100 == 0 && !openED) {
+
+      if(!openED) {
+      chart2.data.datasets.forEach((dataset) => {
+        dataset.data.push(co2data);
+      });
+      chart2.update();
+       }
+
+      if(2==3 && o2data%100 == 0 && !openED) {
         openED = true
         $( "#question" ).dialog({
             height: 400,
@@ -81,15 +106,15 @@ drawGrid(current, parseInt(sliderVals[sliders.indexOf(current)]/10))
 
 
 
-    }, 2000);
+    }, 4000);
 
   var labels = Array.apply(null, {
     length: 3
   }).map((cur, index) => {
-    return `Day ${index+1}`
+    return `${index+1} min`
 
   })
-    var ctx = document.getElementById('myChart').getContext('2d');
+    var ctx = document.getElementById('myChartO2').getContext('2d');
 
 
   var img = new Image();
@@ -102,7 +127,7 @@ drawGrid(current, parseInt(sliderVals[sliders.indexOf(current)]/10))
     type: 'line',
     data: {
       datasets: [{
-        label: 'Percent',
+        label: 'Concentrition',
         borderColor: 'rgb(0, 0, 0)',
         data: [75, 75, 75],
          backgroundColor: fillPattern,
@@ -124,6 +149,51 @@ drawGrid(current, parseInt(sliderVals[sliders.indexOf(current)]/10))
 
 
 
+
+}
+
+
+
+
+var ctx2 = document.getElementById('myChartCO2').getContext('2d');
+
+
+var img2 = new Image();
+img2.src = 'img/resize_rat.jpeg';
+img2.onerror=function(){alert('No network connection or image is not available.')}
+img2.onload = function() {
+var fillPattern = ctx2.createPattern(img2, 'repeat');
+
+chart2 = new Chart(ctx2, {
+type: 'line',
+data: {
+  datasets: [{
+    label: 'Concentrition',
+    borderColor: 'rgb(0, 0, 0)',
+    data: [6005, 8750, 7509],
+     backgroundColor: fillPattern,
+  }],
+  labels: labels
+},
+options: {
+  scales: {
+    yAxes: [{
+      ticks: {
+        suggestedMin: 0,
+        suggestedMax: 100
+      }
+    }]
+  }
+}
+});
+
+
+
+
+
+
+
+
 }
 
 })
@@ -137,20 +207,25 @@ drawGrid(current, parseInt(sliderVals[sliders.indexOf(current)]/10))
 //
 // }
 
+// function drawGrid(type, amount) { console.log(type)
+// var el= $(`#${type}Grid`);
+// //ar gridItem =
+//
+// el.html("")
+// while(amount--){
+// console.log("f")
+//
+//   $(`#${type}Grid`).append($(
+//       "<div/>",{class:"type"}
+//     ))}
+// }
+
+
 function drawGrid(type, amount) { console.log(type)
-var el= $(`#${type}Grid`);
+var el= $(`#${type}Bar`);
 //ar gridItem =
 
-el.html("")
-while(amount--){
-console.log("f")
-
-  $(`#${type}Grid`).append($(
-      "<div/>",{class:"type"}
-    ))}
-
-
-
+el.css({width:`${amount*10}%`})
 
 
 

@@ -1,12 +1,14 @@
 <html>
 
 <head>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script
   src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"
   integrity="sha256-0YPKAwZP7Mp3ALMRVB2i8GXeEndvCq3eSl/WsAl1Ryk="
   crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
+
   <script src="js/script.js"></script>
 
 
@@ -49,54 +51,46 @@ ses.grade=.25;
 <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <title>Example</title>
 
-  <style>
-    .slidecontainer {
-      width: 100%;
-    }
-#question{display:none;}
-#sliders >div,#sliders >.row{width:40%;}
-
-    /* canvas {
-   background-image: url(img/Co2.png);
-    } */.row,#sliders{flex-direction:row;display: flex;width:100%; }
-#sliders{ justify-content: space-around;}
-.type{width:10%;height:4%;background-repeat:no-repeat;}
-    #plantGrid .type{background-image:url(img/plant.svg);}
-    #animalGrid .type{background-image:url(img/animal.svg);}
-    .slider {
-      float: left;
-      -webkit-appearance: none;
-      width: 100%;
-      height: 15px;
-      background: #d3d3d3;
-      outline: none;
-      opacity: 0.7;
-      -webkit-transition: .2s;
-      transition: opacity .2s;
-      position:relative;
-       top:0;
-       right:0;
-    }
-  </style>
+ <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 
 <body>
 
-  <center><h1>Simulation</center>
-  <br>
-  <br>
+  <center><h1>Balance a mesocosm</center>
+
+<p style = 'margin-left:75px;margin-right:15px'>  A mesocosm is a small version of an ecosystem that scientists use to study interactions among organisms.Now that we know about processes like photosynthesis and respiration, we know that plants and animals influence the amounts of carbon dioxide and oxygen in the atmosphere. Design a mesocosm in a glass chamber with some combination of sunflower plants and rats so that both organisms can survive.</p>
+
+<div id="outer">
+    <h3 style = 'margin-bottom:0px'> Size of glass chamber in cubic liters </h3> <br>
 
 
-<div id='chart' style="margin-right: 100px;
+    <div id="slider" style = 'margin-left:59px;margin-right:59px'>
+        <div id="custom-handle" class="ui-slider-handle"></div>
+    </div>
+
+
+
+
+
+    </div>
+</div>
+<br>
+<br>
+
+  <div id='chartO2' style="margin-right: 100px;
+    margin-left: 100px;">
+    <canvas id="myChartO2" width='400' height='180'></canvas>
+  </div><br>
+<div id='chartCO2' style="margin-right: 100px;
   margin-left: 100px;">
-  <canvas id="myChart" width='400' height='180'></canvas>
+  <canvas id="myChartCO2" width='400' height='180'></canvas>
 </div><br>
 <div id = 'sliders'>
 <div>
   <label>Plant</label>
   <input class="slider" type='range' id='plant' name='animal' min="0" max="100" value="0">
   <br style = 'clear:both'/>
-  <div class='row' id="plantGrid"></div>
+  <div class='row' id="plantGrid"><div class="bar" id="plantBar"></div></div>
 
 </div>
 
@@ -108,7 +102,7 @@ ses.grade=.25;
 
     <br style = 'clear:both'/>
 
-  <div class='row' id="animalGrid"></div>
+  <div class='row' id="animalGrid"><div class="bar" id="animalBar"></div></div>
 </div>
 </div>
 <div id = 'question'><label for="name">Why is it 0?</label>
