@@ -90,7 +90,7 @@ ses.grade=.25;
   <label>Plant</label>
   <input class="slider" type='range' id='plant' name='animal' min="0" max="100" value="0">
   <br style = 'clear:both'/>
-  <div class='row' id="plantGrid"><div class="bar" id="plantBar"></div></div>
+  <div class='row' id="plantGrid"></div>
 
 </div>
 
@@ -102,7 +102,7 @@ ses.grade=.25;
 
     <br style = 'clear:both'/>
 
-  <div class='row' id="animalGrid"><div class="bar" id="animalBar"></div></div>
+  <div class='row' id="animalGrid"></div>
 </div>
 </div>
 <div id = 'question'><label for="name">Why is it 0?</label>

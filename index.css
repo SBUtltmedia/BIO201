@@ -9,13 +9,13 @@
  background-image: url(img/Co2.png);
   } */.row,#sliders{flex-direction:row;display: flex;width:100%; }
 #sliders{ justify-content: space-around;}
-.type{width:10%;height:4%;background-repeat:no-repeat;}
-  /* #plantGrid .type{background-image:url(img/plant.svg);}
-  #animalGrid .type{background-image:url(img/animal.svg);} */
+.type{width:10%;height:40%;background-repeat:no-repeat;}
+  #plantGrid .type{background-image:url(img/plant.svg);}
+  #animalGrid .type{background-image:url(img/animal.svg);}
 .row {width:100%;height:10%;background-size:10% 100%;overflow:hidden; }
 .bar{width:100%;height:100%;position:relative; background-color:white;border-left:.1rem solid white;}
-  #plantGrid {background-image:url(img/plant.svg);}
-  #animalGrid {background-image:url(img/animal.svg);}
+  /* #plantGrid {background-image:url(img/plant.svg);}
+  #animalGrid {background-image:url(img/animal.svg);} */
 /* #plantBar{background-color:blue}
 #animalBar{background-color:green} */
 .slider2 {

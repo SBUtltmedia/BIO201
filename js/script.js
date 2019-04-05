@@ -1,112 +1,136 @@
 $(function() {
-var answers = new Answers();
+  var answers = new Answers();
 
-var openED = false
+  var openED = false
 
 
-var handle = $( "#custom-handle" );
-    $( "#slider" ).slider({
-      min: 0,
-      max: 10000,
-      value: 2,
-      create: function() {
-        handle.text( $( this ).slider( "value" ) );
-      },
-      slide: function( event, ui ) {
-        handle.text( ui.value + 'L');
-      }
-    });
+  var handle = $("#custom-handle");
+  $("#slider").slider({
+    min: 0,
+    max: 10000,
+    value: 2,
+    create: function() {
+      handle.text($(this).slider("value"));
+    },
+    slide: function(event, ui) {
+      handle.text(ui.value + 'L');
+
+      var x = ['1min', '2min', '3min'];
+      var o2 = [1000, 2000, 3000];
+      var co2 = [5000, 6000, 7000]
+      chart2.data.datasets[0].data = co2;
+      chart2.data.labels = x;
+
+      chart2.update();
+
+
+      chart.data.datasets[0].data = o2;
+      chart.data.labels = x;
+
+      chart.update();
+    }
+
+  });
 
 
   var day = 3
   var o2data = 75;
   var chart;
   var chart2;
-  console.log($('.slider'))
-  var sliders = ['plant','animal']
 
-  $('.slider').on('change', function(evt) {
+  var sliders = ['plant', 'animal']
 
+
+
+  $('.slider').off().on('change', function(evt) {
+  //  var current =evt.currentTarget.id
+    var sliderVals = sliders.map((cur, index) => {
+
+    var value=  $(`#${cur}`).val()
+
+drawGrid(cur, Math.floor(value/10))
+
+    })
+    //console.log(sliderVals)
+
+    var x = ['1min', '2min', '3min'];
+    var o2 = [1000, 2000, 3000];
+    var co2 = [5000, 6000, 7000]
+    chart2.data.datasets[0].data = co2;
+    chart2.data.labels = x;
+
+    chart2.update();
+
+
+    chart.data.datasets[0].data = o2;
+    chart.data.labels = x;
+
+    chart.update();
+console.log("fd")
+
+
+
+  })
+
+
+
+
+
+
+
+  setInterval(function(evt) {
     var sliderVals = sliders.map((cur, index) => $(`#${cur}`).val())
-     //console.log(sliderVals)
-     var x = ['1min','2min','3min'];
-     var o2 = [1000,2000,3000];
-     var co2 = [5000,6000,7000]
- chart2.data.datasets[0].data = co2;
- chart2.data.labels = x;
-
- chart2.update();
+    //console.log(sliderVals)
 
 
- chart.data.datasets[0].data = o2;
- chart.data.labels = x;
+    //chart.data.datasets[0].data
+    o2data = Math.min(100, Math.max(0, o2data + o2formula(...sliderVals)))
+    co2data = 7000 - o2data
 
- chart.update();
-
-
-
-
-//drawGrid(current, parseInt(sliderVals[sliders.indexOf(current)/10]))
-})
-
-
-
-
-
-
-
-  setInterval(function(evt){     var sliderVals = sliders.map((cur, index) => $(`#${cur}`).val())
-       //console.log(sliderVals)
-
-
-      //chart.data.datasets[0].data
-      o2data = Math.min(100,Math.max(0, o2data + o2formula(...sliderVals)))
-      co2data = 7000 - o2data
-
-      day = day + 1
-      label = day + " min"
-      if(!openED){
+    day = day + 1
+    label = day + " min"
+    if (!openED) {
       chart.data.labels.push(label);
       chart.data.datasets.forEach((dataset) => {
         dataset.data.push(o2data);
-      }
-      );
-      chart.update();}
+      });
+      chart.update();
+    }
 
 
 
-      if(!openED) {
+    if (!openED) {
       chart2.data.datasets.forEach((dataset) => {
         dataset.data.push(co2data);
       });
       chart2.update();
-       }
+    }
 
-      if(2==3 && o2data%100 == 0 && !openED) {
-        openED = true
-        $( "#question" ).dialog({
-            height: 400,
-            width: 350,
-            modal: true,
-            buttons: {
-              "submit": function() {
-                answers.addAnswer('submit');
-                $(this).dialog( "close" );
-              },
-              Cancel: function() {
-                answers.addAnswer('cancel');
-                $(this).dialog( "close" );
-              }
-            }
-          });
-
-
-      }
+    if (2 == 3 && o2data % 100 == 0 && !openED) {
+      openED = true
+      $("#question").dialog({
+        height: 400,
+        width: 350,
+        modal: true,
+        buttons: {
+          "submit": function() {
+            answers.addAnswer('submit');
+            $(this).dialog("close");
+          },
+          Cancel: function() {
+            answers.addAnswer('cancel');
+            $(this).dialog("close");
+          }
+        }
+      });
 
 
+    }
 
 
-    }, 4000);
+
+
+  }, 3000);
 
   var labels = Array.apply(null, {
     length: 3
@@ -114,78 +138,82 @@ var handle = $( "#custom-handle" );
     return `${index+1} min`
 
   })
-    var ctx = document.getElementById('myChartO2').getContext('2d');
+  var ctx = document.getElementById('myChartO2').getContext('2d');
 
 
   var img = new Image();
   img.src = 'img/resized.png';
-  img.onerror=function(){alert('No network connection or image is not available.')}
+  img.onerror = function() {
+    alert('No network connection or image is not available.')
+  }
   img.onload = function() {
     var fillPattern = ctx.createPattern(img, 'repeat');
 
- chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      datasets: [{
-        label: 'Concentrition',
-        borderColor: 'rgb(0, 0, 0)',
-        data: [75, 75, 75],
-         backgroundColor: fillPattern,
-      }],
-      labels: labels
-    },
-    options: {
-      scales: {
-        yAxes: [{
-          ticks: {
-            suggestedMin: 0,
-            suggestedMax: 100
-          }
-        }]
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: 'Concentrition',
+          borderColor: 'rgb(0, 0, 0)',
+          data: [75, 75, 75],
+          backgroundColor: fillPattern,
+        }],
+        labels: labels
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              suggestedMin: 0,
+              suggestedMax: 100
+            }
+          }]
+        }
       }
-    }
-  });
+    });
 
 
 
 
 
-}
-
-
-
-
-var ctx2 = document.getElementById('myChartCO2').getContext('2d');
-
-
-var img2 = new Image();
-img2.src = 'img/resize_rat.jpeg';
-img2.onerror=function(){alert('No network connection or image is not available.')}
-img2.onload = function() {
-var fillPattern = ctx2.createPattern(img2, 'repeat');
-
-chart2 = new Chart(ctx2, {
-type: 'line',
-data: {
-  datasets: [{
-    label: 'Concentrition',
-    borderColor: 'rgb(0, 0, 0)',
-    data: [6005, 8750, 7509],
-     backgroundColor: fillPattern,
-  }],
-  labels: labels
-},
-options: {
-  scales: {
-    yAxes: [{
-      ticks: {
-        suggestedMin: 0,
-        suggestedMax: 100
-      }
-    }]
   }
-}
-});
+
+
+
+
+  var ctx2 = document.getElementById('myChartCO2').getContext('2d');
+
+
+  var img2 = new Image();
+  img2.src = 'img/resize_rat.jpeg';
+  img2.onerror = function() {
+    alert('No network connection or image is not available.')
+  }
+  img2.onload = function() {
+    var fillPattern = ctx2.createPattern(img2, 'repeat');
+
+    chart2 = new Chart(ctx2, {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: 'Concentrition',
+          borderColor: 'rgb(0, 0, 0)',
+          data: [6005, 8750, 7509],
+          backgroundColor: fillPattern,
+        }],
+        labels: labels
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              suggestedMin: 0,
+              suggestedMax: 100
+            }
+          }]
+        }
+      }
+    });
 
 
 
@@ -194,7 +222,7 @@ options: {
 
 
 
-}
+  }
 
 })
 //
@@ -222,15 +250,23 @@ options: {
 
 
 function drawGrid(type, amount) { console.log(type)
-var el= $(`#${type}Bar`);
+var el= $(`#${type}Grid`);
 //ar gridItem =
 
-el.css({width:`${amount*10}%`})
+el.html("")
+while(amount--){
+console.log("f")
 
-
-
-
+  $(`#${type}Grid`).append($(
+      "<div/>",{class:"type"}
+    ))}
 }
+
+
+
+
+
+
 
 function o2formula(plant, animal) {
   return 0.21 * plant - 0.35 * animal;
@@ -239,22 +275,21 @@ function o2formula(plant, animal) {
 
 class Answers {
   constructor() {
-    this.answers=[];
+    this.answers = [];
 
   }
-  addAnswer(answer){
-postLTI(ses)
-this.answers.push(answer)
+  addAnswer(answer) {
+    postLTI(ses)
+    this.answers.push(answer)
 
-}
+  }
 
-sendAnswer()
-  {
+  sendAnswer() {
 
-   //  $.post( "save.php",  {data:this.answers} )
-   // .done(function( data ) {
-   //   alert( "Data Loaded: " + data );
-   // });
+    //  $.post( "save.php",  {data:this.answers} )
+    // .done(function( data ) {
+    //   alert( "Data Loaded: " + data );
+    // });
 
   }
 }
