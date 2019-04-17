@@ -2,11 +2,11 @@ $(function() {
   var answers = new Answers();
 
   var openED = false
-  var time = 3
-  var o2data = 75;
+  var time = 0
+
   var chart;
   var chart2;
-  var day = 3
+
   var error = 5
 
   var ratslopeO2 = -278 / 60
@@ -18,6 +18,10 @@ $(function() {
   var tanksize = 100
   var pCO2 = 0.000407
   var pO2 = 0.20946
+  var curCO2 = pCO2
+  var curO2 = pO2
+  var animal = 0
+  var plant = 0
 
   var sliders = ['plant', 'animal']
 
@@ -60,8 +64,32 @@ $(function() {
 
     var value=  $(`#${cur}`).val()
 drawGrid(cur, Math.floor(value/10))
-
+    if(cur == 'animal') {
+      animal = value
+    }else{
+      plant = value
+    }
 })
+
+time = 0
+var plantO2 = formula(tanksize*pO2,plant, plantslopeO2, time,100,error,3)
+var aniO2 = formula(tanksize*pO2,animal, ratslopeO2,time,100,error, 3)
+var plantCO2 = formula(tanksize*pCO2,plant, plantslopeCO2,time, 100, error,3)
+var aniCO2 = formula(tanksize*pCO2,ratslopeCO2, time, 100, error, 3)
+var combineO2 = coformula(tanksize*pO2,animal, ratslopeO2, plant, plantslopeO2,time, 100,error,3)
+var combineCO2 = coformula(tanksize*pO2,animal, ratslopeCO2, plant, plantslopeCO2, time, 100,error,3)
+
+chart.data.dataset[1][0] = aniO2[1]
+chart.data.dataset[1][1] = plantO2[1]
+chart.data.dataset[1][2] = combineO2[1]
+chart.data.labels = aniO2[0]
+
+
+chart2.data.dataset[1][0] = aniCO2[1]
+chart2.data.dataset[1][1] = plantCO2[1]
+chart2.data.dataset[1][2] = combineCO2[1]
+chart2.data.labels = aniCO2[0]
+
 //     //console.log(sliderVals)
 //
 //     var x = ['1min', '2min', '3min'];
@@ -92,7 +120,7 @@ drawGrid(cur, Math.floor(value/10))
   setInterval(function(evt) {
     var sliderVals = sliders.map((cur, index) => $(`#${cur}`).val())
     //console.log(sliderVals)
-
+    time = 0;
 
     // //chart.data.datasets[0].data
     // o2data = Math.min(100, Math.max(0, o2data + o2formula(...sliderVals)))
@@ -155,12 +183,12 @@ drawGrid(cur, Math.floor(value/10))
 
 
 
-  var initPlantO2 = formula(tanksize*pO2,0,100,error,3)
-  var initaniO2 = formula(tanksize*pO2,0,100,error, 3)
-  var initPlantCO2 = formula(tanksize*pCO2,0,100, error,3)
-  var initaniCO2 = formula(tanksize*pCO2,0,100, error, 3)
-  var combineO2 = formula(tanksize*pO2,0,100,error,3)
-  var combineCO2 = formula(tanksize*pCO2,0,100,error,3)
+  var plantO2 = formula(tanksize*pO2,plant, plantslopeO2, time,100,error,3)
+  var aniO2 = formula(tanksize*pO2,animal, ratslopeO2,time,100,error, 3)
+  var plantCO2 = formula(tanksize*pCO2,plant, plantslopeCO2,time, 100, error,3)
+  var aniCO2 = formula(tanksize*pCO2,ratslopeCO2, time, 100, error, 3)
+  var combineO2 = coformula(tanksize*pO2,animal, ratslopeO2, plant, plantslopeO2,time, 100,error,3)
+  var combineCO2 = coformula(tanksize*pO2,animal, ratslopeCO2, plant, plantslopeCO2, time, 100,error,3)
 
   var ctx = document.getElementById('myChartO2').getContext('2d');
 
@@ -169,19 +197,19 @@ drawGrid(cur, Math.floor(value/10))
     chart = new Chart(ctx , {
       type: 'line',
       data: {
-        labels: initaniO2[0],
+        labels: aniO2[0],
         datasets: [{
           label: 'Rats',
           fill: false,
           backgroundColor: "rgb(255, 0, 0)",
           borderColor: "rgb(255, 0, 0)",
-          data: initaniO2[1]
+          data: aniO2[1]
         }, {
           label: 'Plants',
           fill: false,
           backgroundColor: "rgb(0, 255, 0)",
           borderColor: "rgb(0, 255, 0)",
-          data: initPlantO2[1],
+          data: plantO2[1],
         }, {
           label: 'Net',
           fill: false,
@@ -189,7 +217,13 @@ drawGrid(cur, Math.floor(value/10))
           borderColor: "rgb(0, 0, 255)",
           data: combineO2[1],
         }]
+    }, options: {
+        title: {
+            display: true,
+            text: 'O2 Concentration in Ml'
+        }
     }});
+    curCO2 = combineO2[1][2]
   var ctx2 = document.getElementById('myChartCO2').getContext('2d');
 
 
@@ -197,19 +231,19 @@ drawGrid(cur, Math.floor(value/10))
     chart2 = new Chart(ctx2, {
       type: 'line',
 			data: {
-				labels: initaniCO2[0],
+				labels: aniCO2[0],
 				datasets: [{
 					label: 'Rats',
 					fill: false,
 					backgroundColor: "rgb(255, 0, 0)",
 					borderColor: "rgb(255, 0, 0)",
-					data: initaniCO2[1]
+					data: aniCO2[1]
 				}, {
 					label: 'Plants',
 					fill: false,
 					backgroundColor: "rgb(0, 255, 0)",
 					borderColor: "rgb(0, 255, 0)",
-					data: initPlantCO2[1],
+					data: plantCO2[1],
 				}, {
 					label: 'Net',
 					fill: false,
@@ -217,7 +251,14 @@ drawGrid(cur, Math.floor(value/10))
 					borderColor: "rgb(0, 0, 255)",
 					data: combineCO2[1],
 				}]
+    }, options: {
+        title: {
+            display: true,
+            text: 'CO2 Concentration in Ml'
+        }
     }});
+    curO2 = combineCO2[1][2]
+    console.log(curCO2,curO2)
 
 
 
@@ -286,12 +327,26 @@ function o2formula(plant, animal) {
   return 0.21 * plant - 0.35 * animal;
 }
 
-function formula(start, slope1, time, error, adding) {
+function coformula(start, animal, slope1, plant, slope2, time, step, error, adding) {
   var timeX = [];
   var conY = [];
   while(adding >= 0) {
-  time = time + 60
-   value = start + time*slope1 + error*Math.abs(slope1)*Math.floor(Math.random() * time)
+  time = time + step
+   value = start + time*slope1*animal + time*slope2*plant + error*Math.abs(slope1)*Math.floor(Math.random() * time)
+   timeX.push(time);
+   conY.push(value);
+   adding = adding - 1;
+   }
+
+   return [timeX, conY]
+}
+
+function formula(start, obj, slope1, time, step, error, adding) {
+  var timeX = [];
+  var conY = [];
+  while(adding >= 0) {
+  time = time + step
+   value = start + time*slope1*obj + error*Math.abs(slope1)*Math.floor(Math.random() * time)
    timeX.push(time);
    conY.push(value);
    adding = adding - 1;
