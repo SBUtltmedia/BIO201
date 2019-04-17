@@ -10,6 +10,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
 
   <script src="js/script.js"></script>
+    <script src="js/jquery.ui.touch-punch.min.js"></script>
+
 
 
   <?php
@@ -60,20 +62,35 @@ ses.grade=.25;
 
 <p style = 'margin-left:75px;margin-right:15px'>  A mesocosm is a small version of an ecosystem that scientists use to study interactions among organisms.Now that we know about processes like photosynthesis and respiration, we know that plants and animals influence the amounts of carbon dioxide and oxygen in the atmosphere. Design a mesocosm in a glass chamber with some combination of sunflower plants and rats so that both organisms can survive.</p>
 
-<div id="outer">
-    <h3 style = 'margin-bottom:0px'> Size of glass chamber in cubic liters </h3> <br>
-
-
-    <div id="slider" style = 'margin-left:59px;margin-right:59px'>
+<div class = 'container'>
+  <div id = 'sliders'>
+    <div id="outer">
+        <h3 style = 'margin-bottom:3'> Size of glass chamber in cubic liters </h3> <br>
+  </div>
+    <div id="slider" style = 'margin-bottom:5%'>
         <div id="custom-handle" class="ui-slider-handle"></div>
     </div>
 
+  <div>
+    <label>Plant</label>
+    <input class="slider" type='range' id='plant' name='animal' min="0" max="100" value="0">
+    <br style = 'clear:both'/>
+    <div class='row' id="plantGrid" style = ' margin-bottom:5%'></div>
+
+  </div>
 
 
+  <div>
+    <label>Animal</label>
 
+    <input class="slider" type='range' id='animal' name='animal' min="0" max="100" value="0">
 
-    </div>
-</div>
+      <br style = 'clear:both'/>
+
+    <div class='row' id="animalGrid"></div>
+  </div>
+  </div>
+<div class = 'graph' id = 'grape'>
 <br>
 <br>
 
@@ -85,25 +102,8 @@ ses.grade=.25;
   margin-left: 100px;">
   <canvas id="myChartCO2" width='400' height='180'></canvas>
 </div><br>
-<div id = 'sliders'>
-<div>
-  <label>Plant</label>
-  <input class="slider" type='range' id='plant' name='animal' min="0" max="100" value="0">
-  <br style = 'clear:both'/>
-  <div class='row' id="plantGrid"></div>
-
 </div>
 
-
-<div>
-  <label>Animal</label>
-
-  <input class="slider" type='range' id='animal' name='animal' min="0" max="100" value="0">
-
-    <br style = 'clear:both'/>
-
-  <div class='row' id="animalGrid"></div>
-</div>
 </div>
 <div id = 'question'><label for="name">Why is it 0?</label>
 
