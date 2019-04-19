@@ -9,9 +9,9 @@ $(function() {
 
   var error = 5
 
-  var ratslopeO2 = -278 / 60
-  var ratslopeCO2 = 253 / 60
-  var plantslopeCO2 = -113.5 / 60
+  var ratslopeO2 = (-278 / 60)
+  var ratslopeCO2 = (253 / 60)
+  var plantslopeCO2 = (-113.5 / 60)
   var plantslopeO2 = 91.5 / 60
   var startplantmass = 10
   var startratmass = 253
@@ -35,230 +35,344 @@ $(function() {
     },
     slide: function(event, ui) {
       handle.text(ui.value + 'L');
-      time = 3;
-      var x = ['1min', '2min', '3min'];
-      var o2 = [1000, 2000, 3000];
-      var co2 = [5000, 6000, 7000]
-      chart2.data.datasets[0].data = co2;
-      chart2.data.labels = x;
-
-      chart2.update();
-
-
-      chart.data.datasets[0].data = o2;
-      chart.data.labels = x;
-
-      chart.update();
+      tanksize = ui.value
+    
+      updateGraph()
     }
 
   });
 
 
+  function updateGraph(adding = 10){
+   // var sliderVal= $("#slider").val()
+   //  var handle = $("#custom-handle");
+   // handle.text(sliderVal + 'L');
+   //
+   // tanksize =sliderVal
+     time = 0
+     var plantO2 = calc(time,tanksize*pO2, {plant:plant}, {slope1:plantslopeO2},100,adding)
+     var aniO2 = calc(time,tanksize*pO2, {animal:animal}, {slope2:ratslopeO2},100,adding)
+     var plantCO2 = calc(time,tanksize*pCO2, {plant:plant}, {slope1:plantslopeCO2},100,adding)
+     var aniCO2 = calc(time,tanksize*pCO2, {animal:animal}, {slope2:ratslopeCO2},100,adding)
+     var combineO2 = calc(time,tanksize*pO2, {animal:animal,plant:plant}, {slope1:plantslopeO2,slope2:ratslopeO2},100,adding)
+     var combineCO2 = calc(time,tanksize*pCO2, {animal:animal,plant:plant}, {slope1:plantslopeCO2,slope2:ratslopeCO2},100,adding)
+
+     var ctx = document.getElementById('myChartO2').getContext('2d');
+
+
+
+       chart = new Chart(ctx , {
+         type: 'line',
+         data: {
+           labels: aniO2['time'],
+           datasets: [{
+             label: 'Rats',
+             fill: false,
+             backgroundColor: "rgb(255, 0, 0)",
+             borderColor: "rgb(255, 0, 0)",
+             data: aniO2['value']
+           }, {
+             label: 'Plants',
+             fill: false,
+             backgroundColor: "rgb(0, 255, 0)",
+             borderColor: "rgb(0, 255, 0)",
+             data: plantO2['value'],
+           }, {
+             label: 'Net',
+             fill: false,
+             backgroundColor: "rgb(0, 0, 255)",
+             borderColor: "rgb(0, 0, 255)",
+             data: combineO2['value'],
+           }]
+       }, options: {
+           title: {
+               display: true,
+               text: 'O2 Concentration in Ml'
+           }
+       }});
+       curO2 = combineO2['value'][2]
+     var ctx2 = document.getElementById('myChartCO2').getContext('2d');
+
+
+
+       chart2 = new Chart(ctx2, {
+         type: 'line',
+         data: {
+           labels: aniCO2['time'],
+           datasets: [{
+             label: 'Rats',
+             fill: false,
+             backgroundColor: "rgb(255, 0, 0)",
+             borderColor: "rgb(255, 0, 0)",
+             data: aniCO2['value']
+           }, {
+             label: 'Plants',
+             fill: false,
+             backgroundColor: "rgb(0, 255, 0)",
+             borderColor: "rgb(0, 255, 0)",
+             data: plantCO2['value'],
+           }, {
+             label: 'Net',
+             fill: false,
+             backgroundColor: "rgb(0, 0, 255)",
+             borderColor: "rgb(0, 0, 255)",
+             data: combineCO2['value'],
+           }]
+       }, options: {
+           title: {
+               display: true,
+               text: 'CO2 Concentration in Ml'
+           }
+       }});
+       curCO2 = combineO2['value'][2]
+
+   //
+   //
+   //   chart = new Chart(ctx , {
+   //     type: 'line',
+   //     data: {
+   //       labels: aniO2[0],
+   //       datasets: [{
+   //         label: 'Rats',
+   //         fill: false,
+   //         backgroundColor: "rgb(255, 0, 0)",
+   //         borderColor: "rgb(255, 0, 0)",
+   //         data: aniO2[1]
+   //       }, {
+   //         label: 'Plants',
+   //         fill: false,
+   //         backgroundColor: "rgb(0, 255, 0)",
+   //         borderColor: "rgb(0, 255, 0)",
+   //         data: plantO2[1],
+   //       }, {
+   //         label: 'Net',
+   //         fill: false,
+   //         backgroundColor: "rgb(0, 0, 255)",
+   //         borderColor: "rgb(0, 0, 255)",
+   //         data: combineO2[1],
+   //       }]
+   //   }, options: {
+   //       title: {
+   //           display: true,
+   //           text: 'O2 Concentration in Ml'
+   //       }
+   //   }});
+   //   curCO2 = combineO2[1][2]
+   // var ctx2 = document.getElementById('myChartCO2').getContext('2d');
+   //
+   //
+   //
+   //   chart2 = new Chart(ctx2, {
+   //     type: 'line',
+   //     data: {
+   //       labels: aniCO2[0],
+   //       datasets: [{
+   //         label: 'Rats',
+   //         fill: false,
+   //         backgroundColor: "rgb(255, 0, 0)",
+   //         borderColor: "rgb(255, 0, 0)",
+   //         data: aniCO2[1]
+   //       }, {
+   //         label: 'Plants',
+   //         fill: false,
+   //         backgroundColor: "rgb(0, 255, 0)",
+   //         borderColor: "rgb(0, 255, 0)",
+   //         data: plantCO2[1],
+   //       }, {
+   //         label: 'Net',
+   //         fill: false,
+   //         backgroundColor: "rgb(0, 0, 255)",
+   //         borderColor: "rgb(0, 0, 255)",
+   //         data: combineCO2[1],
+   //       }]
+   //   }, options: {
+   //       title: {
+   //           display: true,
+   //           text: 'CO2 Concentration in Ml'
+   //       }
+   //   }});
+
+
+
+ }
 
 
 
 
-  $('.slider').off().on('change', function(evt) {
-  //  var current =evt.currentTarget.id
-    var sliderVals = sliders.map((cur, index) => {
-
-    var value=  $(`#${cur}`).val()
-drawGrid(cur, Math.floor(value/10))
-    if(cur == 'animal') {
-      animal = value
-    }else{
-      plant = value
-    }
-})
-
-time = 0
-var plantO2 = formula(tanksize*pO2,plant, plantslopeO2, time,100,error,3)
-var aniO2 = formula(tanksize*pO2,animal, ratslopeO2,time,100,error, 3)
-var plantCO2 = formula(tanksize*pCO2,plant, plantslopeCO2,time, 100, error,3)
-var aniCO2 = formula(tanksize*pCO2,ratslopeCO2, time, 100, error, 3)
-var combineO2 = coformula(tanksize*pO2,animal, ratslopeO2, plant, plantslopeO2,time, 100,error,3)
-var combineCO2 = coformula(tanksize*pO2,animal, ratslopeCO2, plant, plantslopeCO2, time, 100,error,3)
-
-chart.data.dataset[1][0] = aniO2[1]
-chart.data.dataset[1][1] = plantO2[1]
-chart.data.dataset[1][2] = combineO2[1]
-chart.data.labels = aniO2[0]
 
 
-chart2.data.dataset[1][0] = aniCO2[1]
-chart2.data.dataset[1][1] = plantCO2[1]
-chart2.data.dataset[1][2] = combineCO2[1]
-chart2.data.labels = aniCO2[0]
 
-//     //console.log(sliderVals)
+
+
+
+
+
+
+
+//   setInterval(function(evt) {
+//     time = time + 300
+// //     var sliderVals = sliders.map((cur, index) => $(`#${cur}`).val())
+// //     //console.log(sliderVals)
+// //     var plantO2 = formula(tanksize*curO2,plant, plantslopeO2, time,100,error,2)
+// //     var aniO2 = formula(tanksize*curO2,animal, ratslopeO2,time,100,error, 2)
+// //     var plantCO2 = formula(tanksize*curCO2,plant, plantslopeCO2,time, 100, error,2)
+// //     var aniCO2 = formula(tanksize*curCO2,ratslopeCO2, time, 100, error, 2)
+// //     var combineO2 = coformula(tanksize*curO2,animal, ratslopeO2, plant, plantslopeO2,time, 100,error,2)
+// //     var combineCO2 = coformula(tanksize*curCO2,animal, ratslopeCO2, plant, plantslopeCO2, time, 100,error,2)
+// // console.log(chart.data.datasets[0]['data'])
+//     // chart.data.datasets[0]['data'].concat(aniO2[1])
+//     //
+//     // chart.data.datasets[1]['data'].concat(plantO2[1])
+//     // chart.data.datasets[2]['data'].concat(combineO2[1]);
+//     // chart.data.labels.concat(['0'],[0],['abc']);
+//     // chart.update();
+//     // chart2.data.datasets[0]['data'].concat(aniO2[1])
+//     //
+//     // chart2.data.datasets[1]['data'].concat(plantO2[1])
+//     // chart2.data.datasets[2]['data'].concat(combineO2[1]);
+//   updateGraph(time/100+3)
 //
-//     var x = ['1min', '2min', '3min'];
-//     var o2 = [1000, 2000, 3000];
-//     var co2 = [5000, 6000, 7000]
-//     chart2.data.datasets[0].data = co2;
-//     chart2.data.labels = x;
-//     time = 3;
-//     chart2.update();
 //
 //
-//     chart.data.datasets[0].data = o2;
-//     chart.data.labels = x;
 //
-//     chart.update();
-// console.log("fd")
-
-
-
-}).trigger('change')
-
-
-
-
-
-
-
-  setInterval(function(evt) {
-    var sliderVals = sliders.map((cur, index) => $(`#${cur}`).val())
-    //console.log(sliderVals)
-    time = 0;
-
-    // //chart.data.datasets[0].data
-    // o2data = Math.min(100, Math.max(0, o2data + o2formula(...sliderVals)))
-    // co2data = 7000 - o2data
-    //
-    // day = day + 1
-    // label = day + " min"
-    // if (!openED) {
-    //   chart.data.labels.push(label);
-    //   chart.data.datasets.forEach((dataset) => {
-    //     dataset.data.push(o2data);
-    //   });
-    //   chart.update();
-    // }
-
-
-
-    // if (!openED) {
-    //   chart2.data.datasets.forEach((dataset) => {
-    //     dataset.data.push(co2data);
-    //   });
-    //   chart2.update();
-    // }
-
-    if (2 == 3 && o2data % 100 == 0 && !openED) {
-      openED = true
-      $("#question").dialog({
-        height: 400,
-        width: 350,
-        modal: true,
-        buttons: {
-          "submit": function() {
-            answers.addAnswer('submit');
-            $(this).dialog("close");
-          },
-          Cancel: function() {
-            answers.addAnswer('cancel');
-            $(this).dialog("close");
-          }
-        }
-      });
-
-
-    }
+//     if (2 == 3 && o2data % 100 == 0 && !openED) {
+//       openED = true
+//       $("#question").dialog({
+//         height: 400,
+//         width: 350,
+//         modal: true,
+//         buttons: {
+//           "submit": function() {
+//             answers.addAnswer('submit');
+//             $(this).dialog("close");
+//           },
+//           Cancel: function() {
+//             answers.addAnswer('cancel');
+//             $(this).dialog("close");
+//           }
+//         }
+//       });
+//
+//
+//     }
+//
+//
+//
+//
+//   }, 3000);
 
 
 
 
-  }, 3000);
 
-  var labels = Array.apply(null, {
-    length: 3
-  }).map((cur, index) => {
-    return `${index+1} min`
-
+    $('.slider').off().on('change', function(evt) {
+    //  var current =evt.currentTarget.id
+      var sliderVals = sliders.map((cur, index) => {
+  time = 0
+      var value=  $(`#${cur}`).val()
+  drawGrid(cur, Math.floor(value/10))
+      if(cur == 'animal') {
+        animal = Math.floor(value/10)
+      }else{
+        plant = Math.floor(value/10)
+      }
   })
-  var ctx = document.getElementById('myChartO2').getContext('2d');
+ updateGraph()
+
+//   var [plantO2,aniO2, plantCO2,aniCO2 ,combineO2 ,combineCO2] = superCalc()
+//
+//
+//
+// function superCalc(){
+//    return[
+//   calc(time,tanksize*pO2, {plant:plant}, {slope1:plantslopeO2},100,3),
+//    calc(time,tanksize*pO2, {animal:animal}, {slope2:ratslopeO2},100,3),
+// calc(time,tanksize*pCO2, {plant:plant}, {slope1:plantslopeCO2},100,3),
+//   calc(time,tanksize*pCO2, {animal:animal}, {slope2:ratslopeCO2},100,3),
+// calc(time,tanksize*pO2, {animal:animal,plant:plant}, {slope1:plantslopeO2,slope2:ratslopeO2},100,3),
+// calc(time,tanksize*pCO2, {animal:animal,plant:plant}, {slope1:plantslopeCO2,slope2:ratslopeCO2},100,3)]
+// }
+//
+//   var ctx = document.getElementById('myChartO2').getContext('2d');
+//
+//
+//
+//     chart = new Chart(ctx , {
+//       type: 'line',
+//       data: {
+//         labels: aniO2['time'],
+//         datasets: [
+//           {
+//           label: 'Rats',
+//           fill: false,
+//           backgroundColor: "rgb(255, 0, 0)",
+//           borderColor: "rgb(255, 0, 0)",
+//           data: aniO2['value']
+//         },
+//         {
+//           label: 'Plants',
+//           fill: false,
+//           backgroundColor: "rgb(0, 255, 0)",
+//           borderColor: "rgb(0, 255, 0)",
+//           data: plantO2['value'],
+//         },
+//         {
+//           label: 'Net',
+//           fill: false,
+//           backgroundColor: "rgb(0, 0, 255)",
+//           borderColor: "rgb(0, 0, 255)",
+//           data: combineO2['value'],
+//         }
+//       ]
+//     }, options: {
+//         title: {
+//             display: true,
+//             text: 'O2 Concentration in Ml'
+//         }
+//     }});
+//     curO2 = combineO2['value'][2]
+//
+//   var ctx2 = document.getElementById('myChartCO2').getContext('2d');
+//
+//
+//
+//     chart2 = new Chart(ctx2, {
+//       type: 'line',
+// 			data: {
+// 				labels: aniCO2['time'],
+// 				datasets: [
+//           {
+// 					label: 'Rats',
+// 					fill: false,
+// 					backgroundColor: "rgb(255, 0, 0)",
+// 					borderColor: "rgb(255, 0, 0)",
+// 					data: aniCO2['value']
+// 				},
+//         {
+// 					label: 'Plants',
+// 					fill: false,
+// 					backgroundColor: "rgb(0, 255, 0)",
+// 					borderColor: "rgb(0, 255, 0)",
+// 					data: plantCO2['value'],
+// 				}, {
+// 					label: 'Net',
+// 					fill: false,
+// 					backgroundColor: "rgb(0, 0, 255)",
+// 					borderColor: "rgb(0, 0, 255)",
+// 					data: combineCO2['value'],
+// 				}]
+//     }, options: {
+//         title: {
+//             display: true,
+//             text: 'CO2 Concentration in Ml'
+//         }
+//     }});
+//     curCO2 = combineO2['value'][2]
+  // console.log("fd")
 
 
 
-
-
-  var plantO2 = formula(tanksize*pO2,plant, plantslopeO2, time,100,error,3)
-  var aniO2 = formula(tanksize*pO2,animal, ratslopeO2,time,100,error, 3)
-  var plantCO2 = formula(tanksize*pCO2,plant, plantslopeCO2,time, 100, error,3)
-  var aniCO2 = formula(tanksize*pCO2,ratslopeCO2, time, 100, error, 3)
-  var combineO2 = coformula(tanksize*pO2,animal, ratslopeO2, plant, plantslopeO2,time, 100,error,3)
-  var combineCO2 = coformula(tanksize*pO2,animal, ratslopeCO2, plant, plantslopeCO2, time, 100,error,3)
-
-  var ctx = document.getElementById('myChartO2').getContext('2d');
-
-
-
-    chart = new Chart(ctx , {
-      type: 'line',
-      data: {
-        labels: aniO2[0],
-        datasets: [{
-          label: 'Rats',
-          fill: false,
-          backgroundColor: "rgb(255, 0, 0)",
-          borderColor: "rgb(255, 0, 0)",
-          data: aniO2[1]
-        }, {
-          label: 'Plants',
-          fill: false,
-          backgroundColor: "rgb(0, 255, 0)",
-          borderColor: "rgb(0, 255, 0)",
-          data: plantO2[1],
-        }, {
-          label: 'Net',
-          fill: false,
-          backgroundColor: "rgb(0, 0, 255)",
-          borderColor: "rgb(0, 0, 255)",
-          data: combineO2[1],
-        }]
-    }, options: {
-        title: {
-            display: true,
-            text: 'O2 Concentration in Ml'
-        }
-    }});
-    curCO2 = combineO2[1][2]
-  var ctx2 = document.getElementById('myChartCO2').getContext('2d');
-
-
-
-    chart2 = new Chart(ctx2, {
-      type: 'line',
-			data: {
-				labels: aniCO2[0],
-				datasets: [{
-					label: 'Rats',
-					fill: false,
-					backgroundColor: "rgb(255, 0, 0)",
-					borderColor: "rgb(255, 0, 0)",
-					data: aniCO2[1]
-				}, {
-					label: 'Plants',
-					fill: false,
-					backgroundColor: "rgb(0, 255, 0)",
-					borderColor: "rgb(0, 255, 0)",
-					data: plantCO2[1],
-				}, {
-					label: 'Net',
-					fill: false,
-					backgroundColor: "rgb(0, 0, 255)",
-					borderColor: "rgb(0, 0, 255)",
-					data: combineCO2[1],
-				}]
-    }, options: {
-        title: {
-            display: true,
-            text: 'CO2 Concentration in Ml'
-        }
-    }});
-    curO2 = combineCO2[1][2]
-    console.log(curCO2,curO2)
+  }).trigger('change')
 
 
 
@@ -323,37 +437,67 @@ function randn_bm() {
     return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
 }
 
-function o2formula(plant, animal) {
-  return 0.21 * plant - 0.35 * animal;
-}
 
-function coformula(start, animal, slope1, plant, slope2, time, step, error, adding) {
+// function formula(start, {animal=0,plant=0}, {slope1 = 0,slope2 = 0}, time, step, error, adding,calc) {
+//   var timeX = [];
+//
+//   var conY = [];
+//   while(adding >= 0) {
+//  timeX.push(time)
+//
+//   value = start + time*slope1*animal + time*slope2*plant
+//   // /+ error*Math.abs(slope1)*Math.floor(Math.random() * time)
+//
+//    conY.push(value);
+//    adding = adding - 1;
+//    time = time + step
+//
+//    }
+//
+//    return [timeX, conY]
+// }
+
+function calc(time,start,{animal=0,plant=0},{slope1 = 0,slope2 = 0},step,adding){
+console.log(animal,plant)
   var timeX = [];
+
   var conY = [];
-  while(adding >= 0) {
-  time = time + step
-   value = start + time*slope1*animal + time*slope2*plant + error*Math.abs(slope1)*Math.floor(Math.random() * time)
-   timeX.push(time);
+  while(adding+1) {
+ timeX.push(time)
+
+  value = start + time*slope2*animal + time*slope1*plant
+  // /+ error*Math.abs(slope1)*Math.floor(Math.random() * time)
+console.log(value,'value',step,time,slope1,)
    conY.push(value);
-   adding = adding - 1;
+   adding --;
+   time +=step
+
    }
 
-   return [timeX, conY]
+   return {time:timeX, value:conY}
+
 }
 
-function formula(start, obj, slope1, time, step, error, adding) {
-  var timeX = [];
-  var conY = [];
-  while(adding >= 0) {
-  time = time + step
-   value = start + time*slope1*obj + error*Math.abs(slope1)*Math.floor(Math.random() * time)
-   timeX.push(time);
-   conY.push(value);
-   adding = adding - 1;
-   }
 
-   return [timeX, conY]
-}
+//
+// function formula(start, obj, slope1, time, step, error, adding) {
+//   var timeX = [];
+//   var conY = [];
+//
+//   while(adding >= 0) {
+// timeX.push(time)
+//
+//    value = start + time*slope1*obj
+//    //+ error*Math.abs(slope1)*Math.floor(Math.random() * time)
+//
+//    conY.push(value);
+//    adding = adding - 1;
+//    time = time + step
+//
+//    }
+//
+//    return [timeX, conY]
+// }
 
 
 class Answers {
