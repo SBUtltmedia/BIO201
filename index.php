@@ -71,19 +71,19 @@ ses.grade=.25;
         <div id="custom-handle" class="ui-slider-handle"></div>
     </div>
 
-  <div>
+  <div class =  'sliderContainer'>
     <label>Plant</label>
-    <input class="slider" type='range' id='plant' name='animal' min="0" max="100" value="0">
+    <input class="slider" type='range' id='plant' name='animal' min="0" max="10" value="0">
     <br style = 'clear:both'/>
     <div class='row' id="plantGrid" style = ' margin-bottom:5%'></div>
 
   </div>
 
 
-  <div>
+  <div class =  'sliderContainer'>
     <label>Animal</label>
 
-    <input class="slider" type='range' id='animal' name='animal' min="0" max="100" value="0">
+    <input class="slider" type='range' id='animal' name='animal' min="0" max="10" value="0">
 
       <br style = 'clear:both'/>
 
@@ -94,13 +94,13 @@ ses.grade=.25;
 <br>
 <br>
 
-  <div id='chartO2' style="margin-right: 100px;
+  <div id='chartCO2' style="margin-right: 100px;
     margin-left: 100px;">
-    <canvas id="myChartO2" width='400' height='180'></canvas>
+    <canvas id="myChartCO2" width='300' height='300'></canvas>
   </div><br>
-<div id='chartCO2' style="margin-right: 100px;
+<div id='chartO2' style="margin-right: 100px;
   margin-left: 100px;">
-  <canvas id="myChartCO2" width='400' height='180'></canvas>
+  <canvas id="myChartO2" width='300' height='300'></canvas>
 </div><br>
 </div>
 

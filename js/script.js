@@ -15,14 +15,14 @@ $(function() {
   var plantslopeO2 = 91.5 / 60
   var startplantmass = 10
   var startratmass = 253
-  var tanksize = 100
+  var tanksize = 100000
   var pCO2 = 0.000407
   var pO2 = 0.20946
   var curCO2 = pCO2
   var curO2 = pO2
-  var animal = 0
-  var plant = 0
 
+ var species={plant:1,animal:0}
+ $('#plant').val(species.plant)
   var sliders = ['plant', 'animal']
 
   var handle = $("#custom-handle");
@@ -33,10 +33,13 @@ $(function() {
     create: function() {
       handle.text($(this).slider("value"));
     },
-    slide: function(event, ui) {
+    slide:function(event, ui) {
       handle.text(ui.value + 'L');
-      tanksize = ui.value
-    
+    },
+    change: function(event, ui) {
+
+      tanksize = ui.value * 1000
+
       updateGraph()
     }
 
@@ -50,16 +53,18 @@ $(function() {
    //
    // tanksize =sliderVal
      time = 0
-     var plantO2 = calc(time,tanksize*pO2, {plant:plant}, {slope1:plantslopeO2},100,adding)
-     var aniO2 = calc(time,tanksize*pO2, {animal:animal}, {slope2:ratslopeO2},100,adding)
-     var plantCO2 = calc(time,tanksize*pCO2, {plant:plant}, {slope1:plantslopeCO2},100,adding)
-     var aniCO2 = calc(time,tanksize*pCO2, {animal:animal}, {slope2:ratslopeCO2},100,adding)
-     var combineO2 = calc(time,tanksize*pO2, {animal:animal,plant:plant}, {slope1:plantslopeO2,slope2:ratslopeO2},100,adding)
-     var combineCO2 = calc(time,tanksize*pCO2, {animal:animal,plant:plant}, {slope1:plantslopeCO2,slope2:ratslopeCO2},100,adding)
+     var plantO2 = calc(time,tanksize*pO2, species, {slope1:plantslopeO2},100,adding)
+     var aniO2 = calc(time,tanksize*pO2, species, {slope2:ratslopeO2},100,adding)
+     var plantCO2 = calc(time,tanksize*pCO2, species, {slope1:plantslopeCO2},100,adding)
+     var aniCO2 = calc(time,tanksize*pCO2, species, {slope2:ratslopeCO2},100,adding)
+     var combineO2 = calc(time,tanksize*pO2, species, {slope1:plantslopeO2,slope2:ratslopeO2},100,adding)
+     var combineCO2 = calc(time,tanksize*pCO2,species, {slope1:plantslopeCO2,slope2:ratslopeCO2},100,adding)
 
      var ctx = document.getElementById('myChartO2').getContext('2d');
 
-
+if(chart){
+  chart.destroy();
+}
 
        chart = new Chart(ctx , {
          type: 'line',
@@ -85,16 +90,22 @@ $(function() {
              data: combineO2['value'],
            }]
        }, options: {
+         tooltips: {enabled: false},
+hover: {mode: null},
            title: {
                display: true,
                text: 'O2 Concentration in Ml'
            }
        }});
-       curO2 = combineO2['value'][2]
+       console.log('ratsO2',aniO2['value'])
+       console.log('plantO2',plantO2['value'])
+       curO2 = combineO2['value'][9]
      var ctx2 = document.getElementById('myChartCO2').getContext('2d');
 
 
-
+if(chart2) {
+  chart2.destroy()
+}
        chart2 = new Chart(ctx2, {
          type: 'line',
          data: {
@@ -119,11 +130,15 @@ $(function() {
              data: combineCO2['value'],
            }]
        }, options: {
+         tooltips: {enabled: false},
+hover: {mode: null},
            title: {
                display: true,
                text: 'CO2 Concentration in Ml'
            }
        }});
+       console.log('ratsCO2',aniCO2['value'])
+       console.log('plantCO2',plantCO2['value'])
        curCO2 = combineO2['value'][2]
 
    //
@@ -206,9 +221,9 @@ $(function() {
 
 
 
-
-
-
+//
+//
+//
 //   setInterval(function(evt) {
 //     time = time + 300
 // //     var sliderVals = sliders.map((cur, index) => $(`#${cur}`).val())
@@ -266,16 +281,21 @@ $(function() {
 
 
     $('.slider').off().on('change', function(evt) {
+      console.log('activtied')
     //  var current =evt.currentTarget.id
       var sliderVals = sliders.map((cur, index) => {
   time = 0
       var value=  $(`#${cur}`).val()
-  drawGrid(cur, Math.floor(value/10))
-      if(cur == 'animal') {
-        animal = Math.floor(value/10)
-      }else{
-        plant = Math.floor(value/10)
-      }
+  drawGrid(cur, Math.floor(value))
+
+
+
+
+        species[cur] = Math.floor(value)
+        // if(  species[cur] < 10 ||   species['cur']== 0) {
+        //   species[cur]++
+        // }
+
   })
  updateGraph()
 
@@ -411,9 +431,7 @@ $(function() {
 function drawGrid(type, amount) { console.log(type)
 var el= $(`#${type}Grid`);
 //ar gridItem =
-if(amount < 10) {
-amount++
-}
+
 el.html("")
 while(amount--){
 console.log("f")
@@ -457,17 +475,16 @@ function randn_bm() {
 //    return [timeX, conY]
 // }
 
-function calc(time,start,{animal=0,plant=0},{slope1 = 0,slope2 = 0},step,adding){
-console.log(animal,plant)
+function calc(time,start,species,{slope1 = 0,slope2 = 0},step,adding){
+
   var timeX = [];
 
   var conY = [];
   while(adding+1) {
  timeX.push(time)
 
-  value = start + time*slope2*animal + time*slope1*plant
-  // /+ error*Math.abs(slope1)*Math.floor(Math.random() * time)
-console.log(value,'value',step,time,slope1,)
+  value = start + time*slope2*species.animal + time*slope1*species.plant
+
    conY.push(value);
    adding --;
    time +=step
